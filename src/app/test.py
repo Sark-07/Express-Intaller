@@ -130,7 +130,7 @@ def download(key):
                 [sg.Text(f"downloading {x['filename']}...", font=('Arial Bold', 20),
                          size=20,
                          expand_x=True,
-                         justification='center')]
+                         justification='center')],
 
             ]
             popUpWindow = sg.Window('Downloading', popUp,
@@ -139,7 +139,7 @@ def download(key):
             # print(whyNot(f"downloading {x['filename']}..."))
             download_path = key
             response = requests.get(
-                x['url'], verify=False)
+                x['url'], verify=True)
             with open(download_path, 'wb') as f:
                 f.write(response.content)
             flag = 1

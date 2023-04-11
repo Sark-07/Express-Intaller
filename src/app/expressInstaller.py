@@ -124,13 +124,26 @@ appList = [
 def download(key):
     for x in appList:
         if x["filename"] == key:
-            whyNot = chalk.green.bgWhite.bgGray
-            print(whyNot(f"downloading {x['filename']}..."))
+            # whyNot = chalk.green.bgWhite.bgGray
+            flag = 0
+            popUp = [
+                [sg.Text(f"downloading {x['filename']}...", font=('Arial Bold', 20),
+                         size=20,
+                         expand_x=True,
+                         justification='center')],
+
+            ]
+            popUpWindow = sg.Window('Downloading', popUp,
+                                    resizable=True).Finalize()
+
+            # print(whyNot(f"downloading {x['filename']}..."))
             download_path = key
             response = requests.get(
                 x['url'], verify=False)
             with open(download_path, 'wb') as f:
                 f.write(response.content)
+            flag = 1
+            popUpWindow.close()
             install_command = download_path
             subprocess.run(install_command, shell=True)
             break
