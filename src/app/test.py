@@ -1,6 +1,7 @@
 import PySimpleGUI as sg
 import requests
 import subprocess
+from simple_chalk import chalk
 
 appList = [
     {
@@ -74,13 +75,83 @@ appList = [
         "app_name": "xampp",
         "url": "https://sourceforge.net/projects/xampp/files/XAMPP%20Windows/8.0.28/xampp-windows-x64-8.0.28-0-VS16-installer.exe",
         "filename": "xampp.exe"
-    }
+    },
+    {
+        "appid": 13,
+        "app_name": "JDK",
+        "url": "https://download.oracle.com/java/20/latest/jdk-20_windows-x64_bin.exe",
+        "filename": "jdk.exe"
+    },
+    {
+        "appid": 14,
+        "app_name": "Figma",
+        "url": "https://www.figma.com/download/desktop/win",
+        "filename": "figma.exe"
+    },
+    {
+        "appid": 15,
+        "app_name": "Canva",
+        "url": "https://desktop-release.canva.com/Canva%20Setup%201.62.0.exe",
+        "filename": "canva.exe"
+    },
+    {
+        "appid": 16,
+        "app_name": "Discord",
+        "url": "https://dl.discordapp.net/distro/app/stable/win/x86/1.0.9012/DiscordSetup.exe",
+        "filename": "discord.exe"
+    },
+    {
+        "appid": 17,
+        "app_name": "Team Viewer",
+        "url": "https://download.teamviewer.com/download/TeamViewer_Setup_x64.exe",
+        "filename": "teamviewer.exe"
+    },
+    {
+        "appid": 18,
+        "app_name": "VLC",
+        "url": "https://get.videolan.org/vlc/3.0.18/win32/vlc-3.0.18-win32.exe",
+        "filename": "vlc.exe"
+    },
+    {
+        "appid": 19,
+        "app_name": "Spotify",
+        "url": "https://download.scdn.co/SpotifySetup.exe",
+        "filename": "spotify.exe"
+    },
 ]
 
-sg.theme("Darkamber")
-checkbox = [
-    [
-        sg.Checkbox("vscode", key="vscode.exe"),
+
+def download(key):
+    for x in appList:
+        if x["filename"] == key:
+            # whyNot = chalk.green.bgWhite.bgGray
+            flag = 0
+            popUp = [
+                [sg.Text(f"downloading {x['filename']}...", font=('Arial Bold', 20),
+                         size=20,
+                         expand_x=True,
+                         justification='center')]
+
+            ]
+            popUpWindow = sg.Window('Downloading', popUp,
+                                    resizable=True).Finalize()
+
+            # print(whyNot(f"downloading {x['filename']}..."))
+            download_path = key
+            response = requests.get(
+                x['url'], verify=False)
+            with open(download_path, 'wb') as f:
+                f.write(response.content)
+            flag = 1
+            popUpWindow.close()
+            install_command = download_path
+            subprocess.run(install_command, shell=True)
+            break
+
+
+sg.theme('Darkamber')
+checkboxRow1 = [
+    [sg.Checkbox("vscode", key="vscode.exe"),
         sg.Checkbox("notepad++", key="notepad++.exe"),
         sg.Checkbox("nodejs", key="nodejs.exe"),
         sg.Checkbox("chrome", key="chrome.exe"),
@@ -89,59 +160,52 @@ checkbox = [
         sg.Checkbox("eclipse", key="eclipse.exe"),
         sg.Checkbox("postman", key="postman.exe"),
         sg.Checkbox("brave", key="brave.exe"),
-        sg.Checkbox("firefox", key="firefox.exe"),
-        sg.Checkbox("obs", key="obs.exe"),
-        sg.Checkbox("xampp", key="xampp.exe"),
-    ],
+        sg.Checkbox("firefox", key="firefox.exe")]
 ]
-buttons = [[sg.Submit("Install", auto_size_button=True), sg.Exit()]]
+
+checkboxRow2 = [
+    [sg.Checkbox("obs", key="obs.exe"),
+     sg.Checkbox("xampp", key="xampp.exe"),
+     sg.Checkbox("JDK", key="jdk.exe"),
+     sg.Checkbox("Figma", key="figma.exe"),
+     sg.Checkbox("Canva", key="canva.exe"),
+     sg.Checkbox("Discord", key="discord.exe"),
+     sg.Checkbox("Team Viewer", key="teamviewer.exe"),
+     sg.Checkbox("VLC", key="vlc.exe"),
+     sg.Checkbox("Spofity", key="spotify.exe"),
+     ]
+]
+buttons = [
+    [sg.Submit('Install', auto_size_button=True), sg.Exit()]
+]
 
 layout = [
-    [
-        sg.Text(
-            "Express Installer",
-            font=("Arial Bold", 20),
-            size=20,
-            expand_x=True,
-            justification="center",
-        )
-    ],
-    [
-        sg.Text(
-            "Choose Apps",
-            font=("century gothic Bold", 15),
-            expand_x=True,
-            justification="center",
-        )
-    ],
-    [sg.Column(checkbox, justification="center")],
-    [sg.Column(buttons, justification="center")],
+    [sg.Text('Express Installer', font=('Arial Bold', 20),
+             size=20,
+             expand_x=True,
+             justification='center')],
+    [sg.Text('Choose Apps', font=('century gothic Bold', 15),
+             expand_x=True, justification='center')],
+
+    [sg.Column(checkboxRow1, justification='center')],
+    [sg.Column(checkboxRow2, justification='center')],
+    [sg.Column(buttons, justification='center')]
+
+
+
 ]
 
-window = sg.Window("Express Installer", layout, resizable=True).Finalize()
+window = sg.Window('Express Installer', layout, resizable=True).Finalize()
 # window.maximize()
 
-
-def download(key):
-    for x in appList:
-        if x["filename"] == key:
-            print(f"downloading {x['filename']}...")
-            download_path = key
-            response = requests.get(x['url'])
-            with open(download_path, 'wb') as f:
-                f.write(response.content)
-            install_command = download_path
-            subprocess.run(install_command, shell=True)
-            break
-
-
 while True:
+
     event, values = window.read()
 
-    if event == sg.WIN_CLOSED or event == "Exit":
+    if event == sg.WIN_CLOSED or event == 'Exit':
         break
-    if event == "Install":
-        for i in checkbox[0]:
-            if values[i.key] == True:
-                download(i.key)
+    if event == 'Install':
+        for i in values:
+            if values[i]:
+                download(i)
 window.close()
