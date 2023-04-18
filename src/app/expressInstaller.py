@@ -125,7 +125,6 @@ def download(key):
     for x in appList:
         if x["filename"] == key:
             # whyNot = chalk.green.bgWhite.bgGray
-            flag = 0
             popUp = [
                 [sg.Text(f"downloading {x['filename']}...", font=('Arial Bold', 20),
                          size=20,
@@ -142,7 +141,6 @@ def download(key):
                 x['url'], verify=False)
             with open(download_path, 'wb') as f:
                 f.write(response.content)
-            flag = 1
             popUpWindow.close()
             install_command = download_path
             subprocess.run(install_command, shell=True)
